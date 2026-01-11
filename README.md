@@ -40,6 +40,9 @@ Steps to run the project locally:
 
 ## Team Members
 Tanushree 
+
 Tanvi Chillale 
+
 Sumith Dominic Pereira 
+
 Sooraj V R  
