@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { X, Image as ImageIcon, Plus, Check } from 'lucide-react';
-import { addItem, updateItem } from '../utils/menuService';
+import { addItem, updateItem } from '../../shared/services/menuService';
 import './AddItemModal.css';
 
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../../shared/context/ToastContext';
 
 export default function AddItemModal({ onClose, itemToEdit }) {
     const { success, error } = useToast();

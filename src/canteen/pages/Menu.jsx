@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trash2, Edit2, Plus, Utensils } from 'lucide-react';
 import './Menu.css';
 import AddItemModal from '../components/AddItemModal';
-import { subscribeToItems, deleteItem } from '../utils/menuService';
+import { subscribeToItems, deleteItem } from '../../shared/services/menuService';
 
 export default function Menu() {
     const [isModalOpen, setIsModalOpen] = useState(false);

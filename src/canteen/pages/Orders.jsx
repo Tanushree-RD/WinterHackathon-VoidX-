@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { subscribeToOrders, updateOrderStatus, createTestOrder } from '../utils/orderService';
+import { subscribeToOrders, updateOrderStatus, createTestOrder } from '../../shared/services/orderService';
 import { Clock, IndianRupee } from 'lucide-react';
 import './Orders.css';
 

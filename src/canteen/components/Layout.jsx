@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { auth } from '../firebase/firebase';
+import { auth } from '../../shared/firebase/firebase';
 import './Layout.css';
 
 export default function Layout() {

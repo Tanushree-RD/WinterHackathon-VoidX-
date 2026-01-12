@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Loading from './Loading';
+import Loading from '../../shared/components/Loading';
 import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase/firebase';
+import { auth } from '../../shared/firebase/firebase';
 
 export default function ProtectedRoute({ children }) {
     const [user, setUser] = useState(null);
