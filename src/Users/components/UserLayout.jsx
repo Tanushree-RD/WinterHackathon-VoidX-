@@ -53,37 +53,7 @@ export default function UserLayout() {
                     }}>VoidX <span style={{ color: '#3b82f6' }}>Canteen</span></span>
                 </Link>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    {/* My Orders Link */}
-                    <button
-                        onClick={() => navigate('/users/orders')}
-                        style={{
-                            background: 'transparent',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: '0.75rem',
-                            padding: '0.6rem 1rem',
-                            color: '#e2e8f0',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            fontSize: '0.875rem',
-                            fontWeight: '600',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                        }}
-                    >
-                        <History size={18} />
-                        <span style={{ display: 'none', '@media (min-width: 640px)': { display: 'inline' } }}>Orders</span>
-                    </button>
-
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                     {/* Cart Tooltip Button */}
                     <button
                         onClick={() => navigate('/users/cart')}
@@ -102,10 +72,13 @@ export default function UserLayout() {
                         }}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+                            e.currentTarget.style.transform = 'translateY(0)';
                         }}
+                        title="My Cart"
                     >
                         <ShoppingCart size={22} />
                         {getCartItemCount() > 0 && (
@@ -124,11 +97,39 @@ export default function UserLayout() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 border: '2px solid #0f172a',
-                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
                             }}>
                                 {getCartItemCount()}
                             </span>
                         )}
+                    </button>
+
+                    {/* My Orders Link - Styled as icon button next to cart */}
+                    <button
+                        onClick={() => navigate('/users/orders')}
+                        style={{
+                            background: 'rgba(168, 85, 247, 0.1)',
+                            border: '1px solid rgba(168, 85, 247, 0.2)',
+                            borderRadius: '0.75rem',
+                            padding: '0.6rem',
+                            color: '#a855f7',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.2)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.1)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                        title="My Orders"
+                    >
+                        <History size={22} />
                     </button>
 
                     {/* Profile & Logout */}
