@@ -1,0 +1,239 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 800px;
+    padding: 2.5rem;
+    border: 1px solid #333;
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3rem;
+}
+
+.image-upload-area {
+    border: 2px dashed #444;
+    border-radius: 8px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #1a1a1a;
+    overflow: hidden;
+}
+
+.image-upload-area:hover {
+    border-color: #666;
+    background-color: #252525;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.field-group label,
+.tags-label {
+    color: #a5a5a5;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.field-group input {
+    background-color: #2a2a2a;
+    border: 1px solid #333;
+    padding: 0.9rem;
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+}
+
+.field-group input:focus {
+    outline: none;
+    border-color: #646cff;
+}
+
+/* Tags Styles */
+.tags-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tag-chip {
+    background-color: #333;
+    border: 1px solid #444;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e0e0e0;
+}
+
+.tag-remove-icon {
+    cursor: pointer;
+    color: #999;
+}
+
+.tag-remove-icon:hover {
+    color: #ff6b6b;
+}
+
+.add-tag-btn {
+    background-color: transparent;
+    border: 1px dashed #555;
+    color: #aaa;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: all 0.2s;
+}
+
+.add-tag-btn:hover {
+    border-color: #777;
+    color: #fff;
+}
+
+.add-tag-input-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.tag-input-mini {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.9rem;
+    width: 150px;
+}
+
+.tag-input-mini:focus {
+    outline: none;
+    border-color: #646cff;
+}
+
+.tag-actions-mini {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.tag-confirm-btn,
+.tag-cancel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.tag-confirm-btn svg,
+.tag-cancel-btn svg {
+    stroke: white;
+    width: 20px;
+    height: 20px;
+}
+
+.tag-confirm-btn {
+    background-color: #2e7d32;
+    color: white;
+}
+
+.tag-cancel-btn {
+    background-color: #c62828;
+    color: white;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #333;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background-color: #252525;
+}
+
+.btn-confirm {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-confirm.primary {
+    background-color: #646cff;
+}
+
+.btn-confirm.primary:hover {
+    background-color: #7c83ff;
+}
+
+.btn-confirm:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

@@ -1,13 +1,18 @@
 import { db, storage } from '../firebase/firebase';
-import { collection, doc, setDoc, updateDoc, deleteDoc, getDocs, arrayUnion, arrayRemove, getDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc, deleteDoc, getDocs, onSnapshot, arrayUnion, arrayRemove, getDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const ITEMS_COLL = 'Items';
 const TAGS_COLL = 'Tags';
 
-export async function getAllItems() {
-    const snapshot = await getDocs(collection(db, ITEMS_COLL));
-    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+export function subscribeToItems(callback) {
+    const q = collection(db, ITEMS_COLL);
+    return onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        callback(items);
+    }, (error) => {
+        console.error("Error fetching items:", error);
+    });
 }
 
 export async function addItem(name, price, tags, imageFile) {

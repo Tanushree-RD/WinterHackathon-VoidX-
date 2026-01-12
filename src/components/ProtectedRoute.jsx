@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Loading from './Loading';
 import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
@@ -15,7 +16,7 @@ export default function ProtectedRoute({ children }) {
         return () => unsubscribe();
     }, []);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loading />;
     if (!user) return <Navigate to="/login" replace />;
 
     return children;

@@ -1,57 +1,92 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+import { Trash2, Edit2, Plus, Utensils } from 'lucide-react';
+import './Menu.css';
 import AddItemModal from '../components/AddItemModal';
-import { getAllItems, addItem, deleteItem, updateItem } from '../utils/menuService';
+import { subscribeToItems, deleteItem } from '../utils/menuService';
 
 export default function Menu() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editItem, setEditItem] = useState(null);
 
-    useEffect(() => { fetchItems(); }, []);
-    const fetchItems = async () => {
-        try { setItems(await getAllItems()); } catch (e) { console.error(e); } finally { setLoading(false); }
-    };
-    const handleSave = async (data, file) => {
-        try {
-            if (editItem) await updateItem(editItem.id, editItem, data, file);
-            else await addItem(data.name, data.price, data.tags, file);
-            fetchItems();
-        } catch (e) { alert("Error saving item"); }
-    };
+    useEffect(() => {
+        const unsubscribe = subscribeToItems((updatedItems) => {
+            setItems(updatedItems);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+
     const handleDelete = async (item) => {
-        if (!confirm("Delete?")) return;
-        await deleteItem(item.id, item.tags);
-        setItems(items.filter(i => i.id !== item.id));
+        if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+            await deleteItem(item.id, item.tags || []);
+        }
     };
 
-    const itemsByTag = useMemo(() => {
-        const g = {};
-        items.forEach(i => i.tags.forEach(t => { if (!g[t]) g[t] = []; g[t].push(i); }));
-        return g;
-    }, [items]);
+    // Group items by their tags
+    // Since an item can have multiple tags, it will appear in multiple sections
+    const itemsByTag = {};
+    items.forEach(item => {
+        if (item.tags && item.tags.length > 0) {
+            item.tags.forEach(tag => {
+                if (!itemsByTag[tag]) itemsByTag[tag] = [];
+                itemsByTag[tag].push(item);
+            });
+        } else {
+            // Fallback for no tags
+            if (!itemsByTag['Uncategorized']) itemsByTag['Uncategorized'] = [];
+            itemsByTag['Uncategorized'].push(item);
+        }
+    });
+
+    const categories = Object.keys(itemsByTag).sort();
 
     return (
-        <div>
-            <h1>Menu Management</h1>
-            {loading ? <p>Loading...</p> : Object.entries(itemsByTag).map(([tag, list]) => (
-                <div key={tag}>
-                    <h2>{tag}</h2>
-                    <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto' }}>
-                        {list.map(item => (
-                            <div key={item.id} style={{ minWidth: '200px', border: '1px solid #444', padding: '1rem', borderRadius: '8px' }}>
-                                <strong>{item.name}</strong> - ₹{item.price}
-                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                                    <button onClick={() => { setEditItem(item); setIsModalOpen(true); }}>Edit</button>
-                                    <button onClick={() => handleDelete(item)}>Delete</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+        <div className="menu-container">
+            <h2 className="menu-header">Menu Management</h2>
+
+            <button className="add-item-btn" onClick={() => setIsModalOpen(true)}>
+                <Plus size={18} /> Add New Item
+            </button>
+
+            {loading ? (
+                <div style={{ textAlign: 'center', marginTop: '4rem' }}>Loading menu...</div>
+            ) : items.length === 0 ? (
+                <div style={{ textAlign: 'center', marginTop: '4rem', color: '#777' }}>
+                    <p>No items found. Click the button below to add one.</p>
                 </div>
-            ))}
-            <button onClick={() => { setEditItem(null); setIsModalOpen(true); }} style={{ position: 'fixed', bottom: '2rem', right: '2rem', padding: '1rem', borderRadius: '50%' }}>+</button>
-            <AddItemModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={handleSave} initialData={editItem} />
+            ) : (
+                <div className="menu-scroll-container">
+                    {categories.map(category => (
+                        <div key={category} className="category-section">
+                            <h3 className="category-title">{category}</h3>
+                            <div className="items-horizontal-scroll">
+                                {itemsByTag[category].map(item => (
+                                    <div key={`${category}-${item.id}`} className="menu-card">
+                                        <div className="card-image-placeholder">
+                                            {item.imageUrl ? (
+                                                <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            ) : (
+                                                <Utensils size={40} />
+                                            )}
+                                        </div>
+                                        <div className="card-content">
+                                            <h4 className="card-title">{item.name}</h4>
+                                            <p className="card-price">₹{item.price}</p>
+                                        </div>
+                                        <div className="card-actions">
+                                            <Edit2 size={16} className="action-icon" />
+                                            <Trash2 size={16} className="action-icon" onClick={() => handleDelete(item)} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {isModalOpen && <AddItemModal onClose={() => setIsModalOpen(false)} />}
         </div>
     );
 }

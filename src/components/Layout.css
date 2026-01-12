@@ -1,0 +1,75 @@
+.layout-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #1a1a1a;
+    /* subtle border or shadow if needed, image looks completely flat/dark */
+}
+
+.brand {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #7c7cff;
+    /* Approximate purple color from "Staff Dashboard" text if it was colored, or white. Image shows purple text for 'Staff Dashboard' */
+    color: #8f94fb;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: #a5a5a5;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    color: #fff;
+}
+
+.nav-btn.active {
+    background-color: #646cff;
+    color: white;
+    box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+}
+
+.logout-btn {
+    margin-left: 1rem;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.95rem;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #333;
+}
+
+.logout-btn:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #444;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}

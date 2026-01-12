@@ -1,0 +1,142 @@
+.menu-container {
+    color: #fff;
+    padding-bottom: 5rem;
+    /* Space for the fixed button */
+}
+
+.menu-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
+}
+
+.category-section {
+    margin-bottom: 3rem;
+}
+
+.category-title {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #a5a5a5;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+}
+
+/* Horizontal Scroll Container */
+.items-horizontal-scroll {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    /* Hide scrollbar for cleaner look but keep functionality */
+    scrollbar-width: thin;
+    scrollbar-color: #444 #1a1a1a;
+}
+
+.items-horizontal-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.items-horizontal-scroll::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.items-horizontal-scroll::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 4px;
+}
+
+.menu-card {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s;
+    /* Fixed width for scrollable cards */
+    min-width: 220px;
+    width: 220px;
+    border: 1px solid #333;
+}
+
+.menu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-color: #555;
+}
+
+.card-image-placeholder {
+    height: 150px;
+    background-color: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-price {
+    color: #4caf50;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.card-actions {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.8rem;
+}
+
+.action-icon {
+    cursor: pointer;
+    color: #777;
+    transition: color 0.2s;
+}
+
+.action-icon:hover {
+    color: #fff;
+}
+
+.add-item-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    background-color: #646cff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    z-index: 900;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.add-item-btn:hover {
+    background-color: #7c83ff;
+    transform: translateX(-50%) translateY(-4px);
+    box-shadow: 0 8px 25px rgba(100, 108, 255, 0.4);
+}
