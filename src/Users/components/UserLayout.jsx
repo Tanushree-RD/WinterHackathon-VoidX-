@@ -4,11 +4,7 @@ import { useCart } from '../../shared/context/CartContext';
 import { LogOut, ShoppingCart, User, History, UtensilsCrossed } from 'lucide-react';
 
 export default function UserLayout() {
-<<<<<<< HEAD
     const { user, signOut } = useAuth();
-=======
-    const { logout, user } = useAuth();
->>>>>>> ba9d437162e1e2e1142f43db71c01685236f8801
     const { getCartItemCount } = useCart();
     const navigate = useNavigate();
 
