@@ -4,13 +4,13 @@ import { useCart } from '../../shared/context/CartContext';
 import { ShoppingCart, LogOut, User as UserIcon } from 'lucide-react';
 
 export default function UserLayout() {
-    const { user, logout } = useAuth();
+    const { user, signOut } = useAuth();
     const { getCartItemCount } = useCart();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
-            await logout();
+            await signOut();
             navigate('/login');
         } catch (error) {
             console.error('Logout failed:', error);
