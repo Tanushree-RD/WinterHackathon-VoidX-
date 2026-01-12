@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { subscribeToOrders, updateOrderStatus, createTestOrder } from '../../shared/services/orderService';
-import { Clock, IndianRupee } from 'lucide-react';
+import { Clock, IndianRupee, ChevronDown, Check } from 'lucide-react';
 import './Orders.css';
 
 export default function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedOrders, setExpandedOrders] = useState({});
 
     useEffect(() => {
         const unsub = subscribeToOrders((newOrders) => {
@@ -16,6 +17,13 @@ export default function Orders() {
     }, []);
 
     const [undoData, setUndoData] = useState(null);
+
+    const toggleExpand = (orderId) => {
+        setExpandedOrders(prev => ({
+            ...prev,
+            [orderId]: !prev[orderId]
+        }));
+    };
 
     // Filtered lists
     const cashOrders = orders.filter(o => o.status === 'cash');
@@ -77,25 +85,56 @@ export default function Orders() {
                         <div key={order.id} className="order-card">
                             <div className="order-card-header">
                                 <span className="order-token">Token #{order.token}</span>
-                                <span className="order-time"><Clock size={12} style={{ marginRight: 4 }} />{formatTime(order.createdAt)}</span>
+                                <div className="header-actions">
+                                    <button
+                                        className="btn-header-action btn-expand"
+                                        onClick={() => toggleExpand(order.id)}
+                                        title="Expand/Collapse Details"
+                                    >
+                                        <ChevronDown
+                                            size={24}
+                                            strokeWidth={3}
+                                            color="#00d4ff"
+                                            style={{
+                                                transform: expandedOrders[order.id] ? 'rotate(180deg)' : 'rotate(0deg)',
+                                                transition: 'transform 0.3s ease'
+                                            }}
+                                        />
+                                    </button>
+                                    <button
+                                        className="btn-header-action btn-paid"
+                                        onClick={() => handleMarkPaid(order.id)}
+                                        title="Mark as Paid"
+                                    >
+                                        <Check size={24} strokeWidth={3} color="#ffffff" />
+                                    </button>
+                                </div>
                             </div>
-                            <div className="order-items">
-                                {order.items.map((item, idx) => (
-                                    <div key={idx} className="order-item-row">
-                                        <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
-                                        <span>₹{item.price * item.quantity}</span>
+
+                            {expandedOrders[order.id] && (
+                                <div className="order-details-expanded">
+                                    <div className="order-time-info">
+                                        <Clock size={12} style={{ marginRight: 4 }} />
+                                        {formatTime(order.createdAt)}
                                     </div>
-                                ))}
-                            </div>
-                            <div className="order-total">
-                                <span className="total-label">Total Amount</span>
-                                <span className="total-amount">₹{order.totalPrice}</span>
-                            </div>
-                            <div className="order-actions">
-                                <button className="btn-action btn-mark-paid" onClick={() => handleMarkPaid(order.id)}>
-                                    Mark as Paid
-                                </button>
-                            </div>
+                                    <div className="order-items">
+                                        {(!order.items || order.items.length === 0) ? (
+                                            <div style={{ color: '#888', fontStyle: 'italic' }}>No items in order</div>
+                                        ) : (
+                                            order.items.map((item, idx) => (
+                                                <div key={idx} className="order-item-row">
+                                                    <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
+                                                    <span>₹{item.price * item.quantity}</span>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    <div className="order-total">
+                                        <span className="total-label">Total Amount</span>
+                                        <span className="total-amount">₹{order.totalPrice}</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
