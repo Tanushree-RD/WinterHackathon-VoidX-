@@ -10,6 +10,7 @@ import CanteenLayout from './canteen/components/Layout';
 
 // User imports
 import UserMenu from './Users/pages/UserMenu';
+import UserCart from './Users/pages/UserCart';
 import UserLayout from './Users/components/UserLayout';
 
 // Shared
@@ -57,6 +58,7 @@ function App() {
                                     }
                                 >
                                     <Route path="menu" element={<UserMenu />} />
+                                    <Route path="cart" element={<UserCart />} />
                                     <Route index element={<Navigate to="menu" replace />} />
                                 </Route>
 
