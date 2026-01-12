@@ -124,7 +124,7 @@ export async function setActiveMenuOverride(day) {
     // Override until today 23:59:59
     const now = new Date();
     now.setHours(23, 59, 59, 999);
-    
+
     await setDoc(doc(db, MENU_COLL, 'active'), {
         current: day,
         overrideUntil: now // Firestore helper might be needed if strictly timestamp, but Date usually works
