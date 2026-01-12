@@ -4,6 +4,7 @@ import { useAuth } from '../../shared/context/AuthContext';
 import { useCart } from '../../shared/context/CartContext';
 import { db } from '../../shared/firebase/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { generateToken } from '../../shared/services/orderService';
 import { ArrowLeft, CreditCard, Banknote, ShieldCheck, ShoppingBag, Loader2 } from 'lucide-react';
 
 export default function UserPayment() {
@@ -25,8 +26,9 @@ export default function UserPayment() {
 
         setLoading(true);
         try {
-            // Generate a simple order number
-            const orderNumber = `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+            // Generate token atomically from Firestore
+            const token = await generateToken();
+            const orderNumber = token.toString(); // Use token as Order Id as per requirements
 
             const orderData = {
                 userId: user.uid,
@@ -41,22 +43,29 @@ export default function UserPayment() {
                 })),
                 totalPrice: total,
                 paymentMode: paymentMethod,
-                status: paymentMethod === 'cash' ? 'cash' : 'pending',
+                status: paymentMethod === 'cash' ? 'cash' : 'paid', // If cash -> pending/cash? Requirement: "pending" (cash) - "paid" (online)
+                // Wait, logic says: Status: "pending" (cash) | "paid" (online)
+                // BUT Step 14 says: "pending" (cash) | "paid" (online)
+                // Let's stick to that.
+                status: paymentMethod === 'cash' ? 'pending' : 'paid',
                 createdAt: serverTimestamp(),
                 orderNumber: orderNumber,
-                token: Math.floor(1000 + Math.random() * 9000).toString()
+                token: token,
+                Token: token, // Redundant but follows Step 14 "Token: token"
+                OrderId: token // Follows Step 14 "OrderId: token"
             };
 
+            // Step 14: Order Creation
             await addDoc(collection(db, 'Orders'), orderData);
 
-            // Clear cart after successful order creation
+            // Step 15: Post-Order Cleanup
             clearCart();
 
             // Navigate to success page or orders page
             navigate('/users/orders', { state: { orderPlaced: true, orderNumber } });
         } catch (error) {
             console.error("Error placing order:", error);
-            alert("Failed to place order. Please try again.");
+            alert(`Failed to place order: ${error.message}`);
         } finally {
             setLoading(false);
         }
