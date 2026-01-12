@@ -8,7 +8,7 @@ export function subscribeToOrders(callback) {
     // for the user. This is robust for small-to-medium datasets.
     const q = query(
         collection(db, ORDERS_COLL),
-        where('status', 'in', ['cash', 'paid'])
+        where('status', 'in', ['cash', 'paid', 'pending'])
     );
 
     return onSnapshot(q, (snapshot) => {

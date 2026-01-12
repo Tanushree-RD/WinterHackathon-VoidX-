@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { subscribeToOrders, updateOrderStatus, createTestOrder } from '../../shared/services/orderService';
-import { Clock, IndianRupee, ChevronDown, Check } from 'lucide-react';
+import { Clock, ChevronDown, Check } from 'lucide-react';
 import './Orders.css';
 
 export default function Orders() {
@@ -26,7 +26,7 @@ export default function Orders() {
     };
 
     // Filtered lists
-    const cashOrders = orders.filter(o => o.status === 'cash');
+    const cashOrders = orders.filter(o => o.status === 'cash' || o.status === 'pending');
     const paidOrders = orders.filter(o => o.status === 'paid');
 
     const formatTime = (timestamp) => {
@@ -84,7 +84,7 @@ export default function Orders() {
                     {cashOrders.map(order => (
                         <div key={order.id} className="order-card">
                             <div className="order-card-header">
-                                <span className="order-token">Token #{order.token}</span>
+                                <span className="order-token">Token #{order.token || '---'}</span>
                                 <div className="header-actions">
                                     <button
                                         className="btn-header-action btn-expand"
@@ -124,14 +124,14 @@ export default function Orders() {
                                             order.items.map((item, idx) => (
                                                 <div key={idx} className="order-item-row">
                                                     <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
-                                                    <span>₹{item.price * item.quantity}</span>
+                                                    <span>₹{(item.price || 0) * (item.quantity || 0)}</span>
                                                 </div>
                                             ))
                                         )}
                                     </div>
                                     <div className="order-total">
                                         <span className="total-label">Total Amount</span>
-                                        <span className="total-amount">₹{order.totalPrice}</span>
+                                        <span className="total-amount">₹{order.totalPrice || order.total || 0}</span>
                                     </div>
                                 </div>
                             )}
@@ -150,23 +150,26 @@ export default function Orders() {
                     {paidOrders.map(order => (
                         <div key={order.id} className="order-card" style={{ borderColor: '#2e7d32' }}>
                             <div className="order-card-header">
-                                <span className="order-token">Token #{order.token}</span>
+                                <span className="order-token">Token #{order.token || '---'}</span>
                                 <span className="order-time">{formatTime(order.createdAt)}</span>
                             </div>
-                            <div className="order-items">
-                                {order.items.map((item, idx) => (
+                            <div className="order-items" style={{ marginTop: '1rem' }}>
+                                {order.items?.map((item, idx) => (
                                     <div key={idx} className="order-item-row">
                                         <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
                                     </div>
                                 ))}
+                                {(!order.items || order.items.length === 0) && (
+                                    <div style={{ color: '#888', fontStyle: 'italic' }}>No items in order</div>
+                                )}
                             </div>
-                            <div className="order-total">
-                                <span className="total-label" style={{ color: '#4caf50' }}>PAID via {order.paymentMode}</span>
-                                <span className="total-amount">₹{order.totalPrice}</span>
+                            <div className="order-total" style={{ borderTop: '1px dashed rgba(16, 185, 129, 0.3)' }}>
+                                <span className="total-label" style={{ color: '#4caf50' }}>PAID via {order.paymentMode || 'Counter'}</span>
+                                <span className="total-amount" style={{ fontSize: '1.4rem' }}>₹{order.totalPrice || order.total || 0}</span>
                             </div>
                             <div className="order-actions">
                                 <button className="btn-action btn-picked" onClick={() => handlePicked(order.id)}>
-                                    Order Picked
+                                    Mark Picked
                                 </button>
                             </div>
                         </div>

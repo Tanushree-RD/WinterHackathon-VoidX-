@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../shared/context/AuthContext';
 import { db } from '../../shared/firebase/firebase';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import { ShoppingBag, Clock, CheckCircle2, Package, XCircle, ChevronRight, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, Clock, CheckCircle2, Package, XCircle, ChevronRight, ArrowLeft, Banknote } from 'lucide-react';
 
 const STATUS_COLORS = {
     pending: { bg: 'rgba(234, 179, 8, 0.1)', text: '#eab308', icon: <Clock size={16} /> },

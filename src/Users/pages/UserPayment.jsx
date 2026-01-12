@@ -47,7 +47,7 @@ export default function UserPayment() {
                 // Wait, logic says: Status: "pending" (cash) | "paid" (online)
                 // BUT Step 14 says: "pending" (cash) | "paid" (online)
                 // Let's stick to that.
-                status: paymentMethod === 'cash' ? 'pending' : 'paid',
+                status: paymentMethod === 'cash' ? 'cash' : 'paid',
                 createdAt: serverTimestamp(),
                 orderNumber: orderNumber,
                 token: token,
