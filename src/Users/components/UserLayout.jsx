@@ -1,10 +1,14 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../../shared/context/AuthContext';
 import { useCart } from '../../shared/context/CartContext';
-import { ShoppingCart, LogOut, User as UserIcon } from 'lucide-react';
+import { LogOut, ShoppingCart, User, History, UtensilsCrossed } from 'lucide-react';
 
 export default function UserLayout() {
+<<<<<<< HEAD
     const { user, signOut } = useAuth();
+=======
+    const { logout, user } = useAuth();
+>>>>>>> ba9d437162e1e2e1142f43db71c01685236f8801
     const { getCartItemCount } = useCart();
     const navigate = useNavigate();
 
@@ -13,26 +17,18 @@ export default function UserLayout() {
             await signOut();
             navigate('/login');
         } catch (error) {
-            console.error('Logout failed:', error);
+            console.error("Failed to logout", error);
         }
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            backgroundColor: '#0f172a',
-            backgroundImage: 'radial-gradient(circle at top right, #1e293b, #0f172a)',
-            color: '#f8fafc',
-            fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-            display: 'flex',
-            flexDirection: 'column'
-        }}>
+        <div style={{ minHeight: '100vh', backgroundColor: '#0f172a', display: 'flex', flexDirection: 'column' }}>
             {/* Header / Navbar */}
             <nav style={{
-                padding: '1rem 2rem',
+                padding: '1rem 1.5rem',
                 backgroundColor: 'rgba(15, 23, 42, 0.8)',
                 backdropFilter: 'blur(12px)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -40,43 +36,79 @@ export default function UserLayout() {
                 top: 0,
                 zIndex: 50
             }}>
-                <div
-                    onClick={() => navigate('/users')}
-                    style={{
-                        fontSize: '1.5rem',
-                        fontWeight: '800',
-                        letterSpacing: '-0.025em',
-                        background: 'linear-gradient(to right, #60a5fa, #a855f7)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        cursor: 'pointer',
+                <Link to="/users/menu" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{
+                        width: '40px',
+                        height: '40px',
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #a855f7 100%)',
+                        borderRadius: '0.75rem',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.5rem'
-                    }}
-                >
-                    <div style={{ padding: '0.4rem', borderRadius: '0.5rem', background: 'rgba(96, 165, 250, 0.15)' }}>
-                        🍔
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                    }}>
+                        <UtensilsCrossed size={22} color="white" />
                     </div>
-                    QuikServ
-                </div>
+                    <span style={{
+                        fontSize: '1.25rem',
+                        fontWeight: '800',
+                        color: '#fff',
+                        letterSpacing: '-0.025em'
+                    }}>VoidX <span style={{ color: '#3b82f6' }}>Canteen</span></span>
+                </Link>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                    {/* Cart Button */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {/* My Orders Link */}
+                    <button
+                        onClick={() => navigate('/users/orders')}
+                        style={{
+                            background: 'transparent',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '0.75rem',
+                            padding: '0.6rem 1rem',
+                            color: '#e2e8f0',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            fontSize: '0.875rem',
+                            fontWeight: '600',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        }}
+                    >
+                        <History size={18} />
+                        <span style={{ display: 'none', '@media (min-width: 640px)': { display: 'inline' } }}>Orders</span>
+                    </button>
+
+                    {/* Cart Tooltip Button */}
                     <button
                         onClick={() => navigate('/users/cart')}
                         style={{
                             position: 'relative',
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            background: 'rgba(59, 130, 246, 0.1)',
+                            border: '1px solid rgba(59, 130, 246, 0.2)',
                             borderRadius: '0.75rem',
                             padding: '0.6rem',
-                            color: '#fff',
+                            color: '#60a5fa',
                             cursor: 'pointer',
-                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'all 0.2s',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
                         }}
                     >
                         <ShoppingCart size={22} />
@@ -128,9 +160,6 @@ export default function UserLayout() {
             <main style={{ flex: 1, padding: '1.5rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
                 <Outlet />
             </main>
-
-            {/* Simple Mobile Navigation Placeholder */}
-            {/* Will be used for Step 5: Fixed cart button */}
         </div>
     );
 }

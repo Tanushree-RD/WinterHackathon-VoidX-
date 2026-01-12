@@ -11,6 +11,11 @@ import CanteenLayout from './canteen/components/Layout';
 // User imports
 import UserMenu from './Users/pages/UserMenu';
 import UserCart from './Users/pages/UserCart';
+<<<<<<< HEAD
+=======
+import UserPayment from './Users/pages/UserPayment';
+import UserOrders from './Users/pages/UserOrders';
+>>>>>>> 99a8774 (fix(Logic):internal working logic)
 import UserLayout from './Users/components/UserLayout';
 
 // Shared
@@ -59,6 +64,11 @@ function App() {
                                 >
                                     <Route path="menu" element={<UserMenu />} />
                                     <Route path="cart" element={<UserCart />} />
+<<<<<<< HEAD
+=======
+                                    <Route path="payment" element={<UserPayment />} />
+                                    <Route path="orders" element={<UserOrders />} />
+>>>>>>> 99a8774 (fix(Logic):internal working logic)
                                     <Route index element={<Navigate to="menu" replace />} />
                                 </Route>
 
