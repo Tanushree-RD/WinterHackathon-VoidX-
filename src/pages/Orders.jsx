@@ -1,36 +1,104 @@
 import { useState, useEffect } from 'react';
 import { subscribeToOrders, updateOrderStatus, createTestOrder } from '../utils/orderService';
+import { Clock, IndianRupee } from 'lucide-react';
+import './Orders.css';
 
 export default function Orders() {
     const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsub = subscribeToOrders(setOrders);
+        const unsub = subscribeToOrders((newOrders) => {
+            setOrders(newOrders);
+            setLoading(false);
+        });
         return () => unsub && unsub();
     }, []);
 
     const moveOrder = (id, status) => updateOrderStatus(id, status);
 
+    const cashOrders = orders.filter(o => o.status === 'cash');
+    const paidOrders = orders.filter(o => o.status === 'paid');
+
+    const formatTime = (timestamp) => {
+        if (!timestamp) return '';
+        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    if (loading) return <div className="loading-container">Loading orders...</div>;
+
     return (
-        <div style={{ display: 'flex', gap: '2rem' }}>
-            <div style={{ flex: 1 }}>
-                <h2>Cash ({orders.filter(o => o.status === 'cash').length})</h2>
-                <button onClick={createTestOrder}>+ Test Order</button>
-                {orders.filter(o => o.status === 'cash').map(o => (
-                    <div key={o.id} style={{ border: '1px solid #555', padding: '1rem', margin: '0.5rem 0' }}>
-                        <strong>#{o.token}</strong> - ₹{o.totalPrice}
-                        <button onClick={() => moveOrder(o.id, 'paid')}>Mark Paid</button>
-                    </div>
-                ))}
+        <div className="orders-container">
+            {/* Left Column: Cash on Counter */}
+            <div className="orders-column">
+                <div className="orders-header">
+                    <h2>Cash on Counter <span className="count-badge">{cashOrders.length}</span></h2>
+                    {/* Dev tool to add orders */}
+                    <button onClick={createTestOrder} style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', background: '#444' }}>+ Test</button>
+                </div>
+                <div className="orders-list">
+                    {cashOrders.length === 0 && <div className="no-orders">No pending cash orders</div>}
+                    {cashOrders.map(order => (
+                        <div key={order.id} className="order-card">
+                            <div className="order-card-header">
+                                <span className="order-token">Token #{order.token}</span>
+                                <span className="order-time"><Clock size={12} style={{ marginRight: 4 }} />{formatTime(order.createdAt)}</span>
+                            </div>
+                            <div className="order-items">
+                                {order.items.map((item, idx) => (
+                                    <div key={idx} className="order-item-row">
+                                        <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
+                                        <span>₹{item.price * item.quantity}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="order-total">
+                                <span className="total-label">Total Amount</span>
+                                <span className="total-amount">₹{order.totalPrice}</span>
+                            </div>
+                            <div className="order-actions">
+                                <button className="btn-action btn-mark-paid" onClick={() => moveOrder(order.id, 'paid')}>
+                                    Mark as Paid
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div style={{ flex: 1 }}>
-                <h2>Paid ({orders.filter(o => o.status === 'paid').length})</h2>
-                {orders.filter(o => o.status === 'paid').map(o => (
-                    <div key={o.id} style={{ border: '1px solid #555', padding: '1rem', margin: '0.5rem 0' }}>
-                        <strong>#{o.token}</strong>
-                        <button onClick={() => moveOrder(o.id, 'picked')}>Picked</button>
-                    </div>
-                ))}
+
+            {/* Right Column: Paid Orders */}
+            <div className="orders-column">
+                <div className="orders-header">
+                    <h2>Paid Orders <span className="count-badge">{paidOrders.length}</span></h2>
+                </div>
+                <div className="orders-list">
+                    {paidOrders.length === 0 && <div className="no-orders" style={{ color: '#555' }}>No paid orders yet</div>}
+                    {paidOrders.map(order => (
+                        <div key={order.id} className="order-card" style={{ borderColor: '#2e7d32' }}>
+                            <div className="order-card-header">
+                                <span className="order-token">Token #{order.token}</span>
+                                <span className="order-time">{formatTime(order.createdAt)}</span>
+                            </div>
+                            <div className="order-items">
+                                {order.items.map((item, idx) => (
+                                    <div key={idx} className="order-item-row">
+                                        <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="order-total">
+                                <span className="total-label" style={{ color: '#4caf50' }}>PAID via {order.paymentMode}</span>
+                                <span className="total-amount">₹{order.totalPrice}</span>
+                            </div>
+                            <div className="order-actions">
+                                <button className="btn-action btn-picked" onClick={() => moveOrder(order.id, 'picked')}>
+                                    Order Picked
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

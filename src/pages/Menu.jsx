@@ -41,11 +41,13 @@ export default function Menu() {
 
     const categories = Object.keys(itemsByTag).sort();
 
+    const [editingItem, setEditingItem] = useState(null);
+
     return (
         <div className="menu-container">
             <h2 className="menu-header">Menu Management</h2>
 
-            <button className="add-item-btn" onClick={() => setIsModalOpen(true)}>
+            <button className="add-item-btn" onClick={() => { setEditingItem(null); setIsModalOpen(true); }}>
                 <Plus size={18} /> Add New Item
             </button>
 
@@ -75,7 +77,7 @@ export default function Menu() {
                                             <p className="card-price">₹{item.price}</p>
                                         </div>
                                         <div className="card-actions">
-                                            <Edit2 size={16} className="action-icon" />
+                                            <Edit2 size={16} className="action-icon" onClick={() => { setEditingItem(item); setIsModalOpen(true); }} />
                                             <Trash2 size={16} className="action-icon" onClick={() => handleDelete(item)} />
                                         </div>
                                     </div>
@@ -86,7 +88,12 @@ export default function Menu() {
                 </div>
             )}
 
-            {isModalOpen && <AddItemModal onClose={() => setIsModalOpen(false)} />}
+            {isModalOpen && (
+                <AddItemModal
+                    onClose={() => { setIsModalOpen(false); setEditingItem(null); }}
+                    itemToEdit={editingItem}
+                />
+            )}
         </div>
     );
 }

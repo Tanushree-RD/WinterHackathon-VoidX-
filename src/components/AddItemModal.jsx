@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { X, Image as ImageIcon, Plus, Check } from 'lucide-react';
-import { addItem } from '../utils/menuService';
+import { addItem, updateItem } from '../utils/menuService';
 import './AddItemModal.css';
 
-export default function AddItemModal({ onClose }) {
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [tags, setTags] = useState([]);
+export default function AddItemModal({ onClose, itemToEdit }) {
+    const [name, setName] = useState(itemToEdit ? itemToEdit.name : '');
+    const [price, setPrice] = useState(itemToEdit ? itemToEdit.price : '');
+    const [tags, setTags] = useState(itemToEdit ? itemToEdit.tags : []);
     const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState(itemToEdit ? itemToEdit.imageUrl : null);
     const [isLoading, setIsLoading] = useState(false);
 
     // Tag Adding UI State
@@ -58,11 +58,15 @@ export default function AddItemModal({ onClose }) {
 
         setIsLoading(true);
         try {
-            await addItem(name, price, tags, imageFile);
-            onClose(); // Close modal on success
+            if (itemToEdit) {
+                await updateItem(itemToEdit.id, itemToEdit, { name, price: Number(price), tags }, imageFile);
+            } else {
+                await addItem(name, price, tags, imageFile);
+            }
+            onClose();
         } catch (error) {
-            console.error("Error adding item:", error);
-            alert("Failed to add item. See console.");
+            console.error("Error saving item:", error);
+            alert("Failed to save item. See console.");
         } finally {
             setIsLoading(false);
         }
@@ -71,7 +75,7 @@ export default function AddItemModal({ onClose }) {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <div className="modal-header">Add New Item</div>
+                <div className="modal-header">{itemToEdit ? 'Edit Item' : 'Add New Item'}</div>
 
                 <div className="modal-body">
                     {/* Left Column: Image Upload */}
@@ -171,7 +175,7 @@ export default function AddItemModal({ onClose }) {
                         onClick={handleSubmit}
                         disabled={isLoading}
                     >
-                        {isLoading ? 'Saving...' : 'Confirm Item'}
+                        {isLoading ? 'Saving...' : (itemToEdit ? 'Update Item' : 'Confirm Item')}
                     </button>
                 </div>
             </div>

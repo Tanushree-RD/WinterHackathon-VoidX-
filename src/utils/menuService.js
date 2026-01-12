@@ -44,8 +44,45 @@ export async function updateItem(itemId, oldData, newData, imageFile) {
         await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(storageRef);
     }
-    await updateDoc(doc(db, ITEMS_COLL, itemId), { ...newData, price: Number(newData.price), imageUrl });
-    // Simplified tag sync for brevity - ideally remove from old, add to new
+
+    const price = Number(newData.price);
+    await updateDoc(doc(db, ITEMS_COLL, itemId), {
+        name: newData.name,
+        price,
+        tags: newData.tags,
+        imageUrl
+    });
+
+    // Tag Synchronization
+    const oldTags = oldData.tags || [];
+    const newTags = newData.tags || [];
+
+    // Tags to remove item from
+    const removedTags = oldTags.filter(t => !newTags.includes(t));
+    for (const tag of removedTags) {
+        // We use arrayRemove which is safe even if doc doesn't exist, 
+        // but we assume tag docs exist if they were in the item previously.
+        // It's safer to check existence or just try update.
+        // If a tag doc is empty afterwards, we could delete it, but keeping it is fine.
+        const tagRef = doc(db, TAGS_COLL, tag);
+        try {
+            await updateDoc(tagRef, { itemIds: arrayRemove(itemId) });
+        } catch (e) {
+            console.log(`Error removing from tag ${tag}`, e);
+        }
+    }
+
+    // Tags to add item to
+    const addedTags = newTags.filter(t => !oldTags.includes(t));
+    for (const tag of addedTags) {
+        const tagRef = doc(db, TAGS_COLL, tag);
+        const tagSnap = await getDoc(tagRef);
+        if (!tagSnap.exists()) {
+            await setDoc(tagRef, { itemIds: [itemId] });
+        } else {
+            await updateDoc(tagRef, { itemIds: arrayUnion(itemId) });
+        }
+    }
 }
 
 export async function deleteItem(itemId, tags) {
