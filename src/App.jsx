@@ -1,42 +1,64 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './shared/auth/Login';
-import RoleBasedRoute from './shared/auth/RoleBasedRoute';
+import Login from './shared/pages/Login';
+import RoleProtectedRoute from './shared/components/RoleProtectedRoute';
 
-// Canteen imports
+// Admin (Canteen) imports
 import CanteenMenu from './canteen/pages/Menu';
 import CanteenOrders from './canteen/pages/Orders';
 import CanteenLayout from './canteen/components/Layout';
-import CanteenProtectedRoute from './canteen/components/ProtectedRoute';
+
+// User imports
+import UserMenu from './Users/pages/UserMenu';
 
 // Shared
 import { ToastProvider } from './shared/context/ToastContext';
+import { AuthProvider } from './shared/context/AuthContext';
 
 function App() {
     return (
-        <ToastProvider>
-            <Router>
-                <Routes>
-                    {/* Public Login Route */}
-                    <Route path="/login" element={<Login />} />
+        <AuthProvider>
+            <ToastProvider>
+                <Router>
+                    <Routes>
+                        {/* Public Login Route */}
+                        <Route path="/login" element={<Login />} />
 
-                    {/* Root - Role-based redirect */}
-                    <Route path="/" element={<RoleBasedRoute />} />
+                        {/* Root - Redirect to login */}
+                        <Route path="/" element={<Navigate to="/login" replace />} />
 
-                    {/* Canteen Routes */}
-                    <Route path="/canteen" element={<CanteenProtectedRoute><CanteenLayout /></CanteenProtectedRoute>}>
-                        <Route path="menu" element={<CanteenMenu />} />
-                        <Route path="orders" element={<CanteenOrders />} />
-                        <Route index element={<Navigate to="menu" replace />} />
-                    </Route>
+                        {/* Admin Routes - Protected for admin role only */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <RoleProtectedRoute requiredRole="admin">
+                                    <CanteenLayout />
+                                </RoleProtectedRoute>
+                            }
+                        >
+                            <Route path="menu" element={<CanteenMenu />} />
+                            <Route path="orders" element={<CanteenOrders />} />
+                            <Route index element={<Navigate to="menu" replace />} />
+                        </Route>
 
-                    {/* Client Routes - Placeholder for future development */}
-                    <Route path="/client" element={<div style={{ padding: '2rem', textAlign: 'center' }}>Client Dashboard Coming Soon</div>} />
+                        {/* User Routes - Protected for user role only */}
+                        <Route
+                            path="/users"
+                            element={
+                                <RoleProtectedRoute requiredRole="user">
+                                    <div>User Layout Placeholder</div>
+                                </RoleProtectedRoute>
+                            }
+                        >
+                            <Route path="menu" element={<UserMenu />} />
+                            <Route index element={<Navigate to="menu" replace />} />
+                        </Route>
 
-                    {/* Fallback */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </Router>
-        </ToastProvider>
+                        {/* Fallback */}
+                        <Route path="*" element={<Navigate to="/login" replace />} />
+                    </Routes>
+                </Router>
+            </ToastProvider>
+        </AuthProvider>
     );
 }
 
