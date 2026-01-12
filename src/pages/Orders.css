@@ -179,3 +179,50 @@
     margin-top: 3rem;
     font-style: italic;
 }
+
+.undo-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1000;
+    border: 1px solid #444;
+    animation: slideUp 0.3s ease-out;
+}
+
+.undo-btn {
+    background: transparent;
+    border: 1px solid #646cff;
+    color: #646cff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.undo-btn:hover {
+    background: #646cff;
+    color: white;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}

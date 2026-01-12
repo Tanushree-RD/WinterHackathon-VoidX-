@@ -4,8 +4,13 @@ import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, addDoc, 
 const ORDERS_COLL = 'Orders';
 
 export function subscribeToOrders(callback) {
-    // Removed orderBy to avoid needing a complex composite index for 'in' queries
-    const q = query(collection(db, ORDERS_COLL), where('status', 'in', ['cash', 'paid']));
+    // Reverted to Client-Side sorting to avoid "Missing Index" / Permission issues 
+    // for the user. This is robust for small-to-medium datasets.
+    const q = query(
+        collection(db, ORDERS_COLL),
+        where('status', 'in', ['cash', 'paid'])
+    );
+
     return onSnapshot(q, (snapshot) => {
         const orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         // Sort in memory (asc by createdAt)
@@ -15,7 +20,9 @@ export function subscribeToOrders(callback) {
             return t1 - t2;
         });
         callback(orders);
-    }, console.error);
+    }, (error) => {
+        console.error("Firestore Query Error:", error);
+    });
 }
 
 export async function updateOrderStatus(orderId, status) {

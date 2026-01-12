@@ -15,8 +15,9 @@ export default function Orders() {
         return () => unsub && unsub();
     }, []);
 
-    const moveOrder = (id, status) => updateOrderStatus(id, status);
+    const [undoData, setUndoData] = useState(null);
 
+    // Filtered lists
     const cashOrders = orders.filter(o => o.status === 'cash');
     const paidOrders = orders.filter(o => o.status === 'paid');
 
@@ -25,6 +26,39 @@ export default function Orders() {
         const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
+
+    const handleMarkPaid = async (orderId) => {
+        // Optimistic update or just wait for firestore
+        await updateOrderStatus(orderId, 'paid');
+        setUndoData({ id: orderId, timer: 5, action: 'paid', fromStatus: 'cash' });
+    };
+
+    const handlePicked = async (orderId) => {
+        await updateOrderStatus(orderId, 'picked');
+        setUndoData({ id: orderId, timer: 5, action: 'picked', fromStatus: 'paid' });
+    };
+
+    const handleUndo = async () => {
+        if (undoData) {
+            await updateOrderStatus(undoData.id, undoData.fromStatus);
+            setUndoData(null);
+        }
+    };
+
+    const moveOrder = (id, status) => updateOrderStatus(id, status);
+
+    // Countdown effect for undo
+    useEffect(() => {
+        if (undoData) {
+            const interval = setInterval(() => {
+                setUndoData(prev => {
+                    if (!prev || prev.timer <= 1) return null;
+                    return { ...prev, timer: prev.timer - 1 };
+                });
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [undoData]);
 
     if (loading) return <div className="loading-container">Loading orders...</div>;
 
@@ -58,7 +92,7 @@ export default function Orders() {
                                 <span className="total-amount">₹{order.totalPrice}</span>
                             </div>
                             <div className="order-actions">
-                                <button className="btn-action btn-mark-paid" onClick={() => moveOrder(order.id, 'paid')}>
+                                <button className="btn-action btn-mark-paid" onClick={() => handleMarkPaid(order.id)}>
                                     Mark as Paid
                                 </button>
                             </div>
@@ -92,7 +126,7 @@ export default function Orders() {
                                 <span className="total-amount">₹{order.totalPrice}</span>
                             </div>
                             <div className="order-actions">
-                                <button className="btn-action btn-picked" onClick={() => moveOrder(order.id, 'picked')}>
+                                <button className="btn-action btn-picked" onClick={() => handlePicked(order.id)}>
                                     Order Picked
                                 </button>
                             </div>
@@ -100,6 +134,14 @@ export default function Orders() {
                     ))}
                 </div>
             </div>
+
+            {/* Undo Toast */}
+            {undoData && (
+                <div className="undo-toast">
+                    <span>{undoData.action === 'paid' ? 'Marked as Paid.' : 'Order Picked.'}</span>
+                    <button className="undo-btn" onClick={handleUndo}>Undo ({undoData.timer}s)</button>
+                </div>
+            )}
         </div>
     );
 }

@@ -3,7 +3,10 @@ import { X, Image as ImageIcon, Plus, Check } from 'lucide-react';
 import { addItem, updateItem } from '../utils/menuService';
 import './AddItemModal.css';
 
+import { useToast } from '../context/ToastContext';
+
 export default function AddItemModal({ onClose, itemToEdit }) {
+    const { success, error } = useToast();
     const [name, setName] = useState(itemToEdit ? itemToEdit.name : '');
     const [price, setPrice] = useState(itemToEdit ? itemToEdit.price : '');
     const [tags, setTags] = useState(itemToEdit ? itemToEdit.tags : []);
@@ -17,9 +20,16 @@ export default function AddItemModal({ onClose, itemToEdit }) {
 
     const fileInputRef = useRef(null);
 
+    // Validation
+    const isValid = name.trim() !== '' && price !== '' && tags.length > 0;
+
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                error("Image size must be less than 5MB");
+                return;
+            }
             setImageFile(file);
             const reader = new FileReader();
             reader.onloadend = () => setImagePreview(reader.result);
@@ -51,22 +61,21 @@ export default function AddItemModal({ onClose, itemToEdit }) {
     };
 
     const handleSubmit = async () => {
-        if (!name || !price || tags.length === 0) {
-            alert('Please fill in Name, Price, and at least one Tag.');
-            return;
-        }
+        if (!isValid) return;
 
         setIsLoading(true);
         try {
             if (itemToEdit) {
                 await updateItem(itemToEdit.id, itemToEdit, { name, price: Number(price), tags }, imageFile);
+                success("Item updated successfully!");
             } else {
                 await addItem(name, price, tags, imageFile);
+                success("New item added successfully!");
             }
             onClose();
-        } catch (error) {
-            console.error("Error saving item:", error);
-            alert("Failed to save item. See console.");
+        } catch (err) {
+            console.error("Error saving item:", err);
+            error("Failed to save item. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -173,7 +182,8 @@ export default function AddItemModal({ onClose, itemToEdit }) {
                     <button
                         className="btn-confirm primary"
                         onClick={handleSubmit}
-                        disabled={isLoading}
+                        disabled={isLoading || !isValid}
+                        style={{ opacity: (isLoading || !isValid) ? 0.6 : 1, cursor: (isLoading || !isValid) ? 'not-allowed' : 'pointer' }}
                     >
                         {isLoading ? 'Saving...' : (itemToEdit ? 'Update Item' : 'Confirm Item')}
                     </button>
