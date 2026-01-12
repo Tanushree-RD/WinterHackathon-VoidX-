@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Edit2, Plus, Utensils } from 'lucide-react';
-import './Menu.css';
+import './AllItems.css';
 import AddItemModal from '../components/AddItemModal';
 import { subscribeToItems, deleteItem } from '../../shared/services/menuService';
 
-export default function Menu() {
+export default function AllItems() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ export default function Menu() {
 
     return (
         <div className="menu-container">
-            <h2 className="menu-header">Menu Management</h2>
+            <h2 className="menu-header">All Items</h2>
 
             <button className="add-item-btn" onClick={() => { setEditingItem(null); setIsModalOpen(true); }}>
                 <Plus size={18} /> Add New Item

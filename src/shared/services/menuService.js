@@ -91,3 +91,42 @@ export async function deleteItem(itemId, tags) {
         await updateDoc(doc(db, TAGS_COLL, tag), { itemIds: arrayRemove(itemId) });
     }
 }
+
+const MENU_COLL = 'Menu';
+
+export function subscribeToDailyMenu(day, callback) {
+    return onSnapshot(doc(db, MENU_COLL, day), (docSnap) => {
+        if (docSnap.exists()) {
+            callback(docSnap.data().itemIds || []);
+        } else {
+            callback([]);
+        }
+    });
+}
+
+export async function updateDailyMenu(day, itemIds) {
+    const docRef = doc(db, MENU_COLL, day);
+    // Using merge: true to avoid overwriting other fields if any, though we only store itemIds for now
+    await setDoc(docRef, { itemIds }, { merge: true });
+}
+
+export function subscribeToActiveMenu(callback) {
+    return onSnapshot(doc(db, MENU_COLL, 'active'), (docSnap) => {
+        if (docSnap.exists()) {
+            callback(docSnap.data());
+        } else {
+            callback(null);
+        }
+    });
+}
+
+export async function setActiveMenuOverride(day) {
+    // Override until today 23:59:59
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+    
+    await setDoc(doc(db, MENU_COLL, 'active'), {
+        current: day,
+        overrideUntil: now // Firestore helper might be needed if strictly timestamp, but Date usually works
+    });
+}
