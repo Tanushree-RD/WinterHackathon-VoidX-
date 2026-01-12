@@ -13,14 +13,14 @@ export default function Layout() {
                 <div className="brand">Staff Dashboard</div>
                 <div className="nav-links">
                     <Link
-                        to="/menu"
-                        className={`nav-btn ${location.pathname === '/menu' ? 'active' : ''}`}
+                        to="/canteen/menu"
+                        className={`nav-btn ${location.pathname === '/canteen/menu' ? 'active' : ''}`}
                     >
                         Menu
                     </Link>
                     <Link
-                        to="/orders"
-                        className={`nav-btn ${location.pathname === '/orders' ? 'active' : ''}`}
+                        to="/canteen/orders"
+                        className={`nav-btn ${location.pathname === '/canteen/orders' ? 'active' : ''}`}
                     >
                         Orders
                     </Link>
