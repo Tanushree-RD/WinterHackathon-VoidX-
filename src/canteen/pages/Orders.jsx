@@ -82,13 +82,17 @@ export default function Orders() {
                 <div className="orders-list">
                     {cashOrders.length === 0 && <div className="no-orders">No pending cash orders</div>}
                     {cashOrders.map(order => (
-                        <div key={order.id} className="order-card">
-                            <div className="order-card-header">
+                        <div key={order.id} className="order-card" style={{ cursor: 'default' }}>
+                            <div
+                                className="order-card-header"
+                                onClick={() => toggleExpand(order.id)}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <span className="order-token">Token #{order.token || '---'}</span>
                                 <div className="header-actions">
                                     <button
                                         className="btn-header-action btn-expand"
-                                        onClick={() => toggleExpand(order.id)}
+                                        style={{ pointerEvents: 'none' }} // Header handles the click
                                         title="Expand/Collapse Details"
                                     >
                                         <ChevronDown
@@ -103,7 +107,10 @@ export default function Orders() {
                                     </button>
                                     <button
                                         className="btn-header-action btn-paid"
-                                        onClick={() => handleMarkPaid(order.id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Don't toggle expansion when marking paid
+                                            handleMarkPaid(order.id);
+                                        }}
                                         title="Mark as Paid"
                                     >
                                         <Check size={24} strokeWidth={3} color="#ffffff" />
@@ -148,14 +155,15 @@ export default function Orders() {
                 <div className="orders-list">
                     {paidOrders.length === 0 && <div className="no-orders" style={{ color: '#555' }}>No paid orders yet</div>}
                     {paidOrders.map(order => (
-                        <div key={order.id} className="order-card" style={{ borderColor: '#2e7d32' }}>
-                            <div className="order-card-header">
+                        <div key={order.id} className="order-card" style={{ borderColor: '#2e7d32', display: 'block' }}>
+                            <div className="order-card-header" style={{ marginBottom: '1rem' }}>
                                 <span className="order-token">Token #{order.token || '---'}</span>
                                 <span className="order-time">{formatTime(order.createdAt)}</span>
                             </div>
-                            <div className="order-items" style={{ marginTop: '1rem' }}>
+
+                            <div className="order-items" style={{ marginBottom: '1.5rem' }}>
                                 {order.items?.map((item, idx) => (
-                                    <div key={idx} className="order-item-row">
+                                    <div key={idx} className="order-item-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                         <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
                                     </div>
                                 ))}
@@ -163,13 +171,19 @@ export default function Orders() {
                                     <div style={{ color: '#888', fontStyle: 'italic' }}>No items in order</div>
                                 )}
                             </div>
-                            <div className="order-total" style={{ borderTop: '1px dashed rgba(16, 185, 129, 0.3)' }}>
-                                <span className="total-label" style={{ color: '#4caf50' }}>PAID via {order.paymentMode || 'Counter'}</span>
-                                <span className="total-amount" style={{ fontSize: '1.4rem' }}>₹{order.totalPrice || order.total || 0}</span>
+
+                            <div className="order-total" style={{ borderTop: '1px dashed rgba(16, 185, 129, 0.3)', padding: '1rem 0' }}>
+                                <span className="total-label" style={{ color: '#4caf50' }}>{order.paymentMode?.toUpperCase()} PAID</span>
+                                <span className="total-amount" style={{ fontSize: '1.5rem' }}>₹{order.totalPrice || order.total || 0}</span>
                             </div>
-                            <div className="order-actions">
-                                <button className="btn-action btn-picked" onClick={() => handlePicked(order.id)}>
-                                    Mark Picked
+
+                            <div className="order-actions" style={{ marginTop: '1rem', display: 'flex', width: '100%' }}>
+                                <button
+                                    className="btn-action btn-picked"
+                                    onClick={() => handlePicked(order.id)}
+                                    style={{ width: '100%', padding: '1.2rem', zIndex: 10 }}
+                                >
+                                    Finish Order
                                 </button>
                             </div>
                         </div>
