@@ -12,6 +12,7 @@ This makes food pickup fast, clean, and organized.
 #Demo Video Link:
 https://youtu.be/mTHAdAbR3ik?si=1RRs9i2auR1gPt__
 
+https://youtu.be/NZj2qCCZB4o?si=5xT1HCsQ06FEqa0O
 
 ## Features
 Students can view the menu, place an order, and pay remotely from their phone
