@@ -44,9 +44,12 @@ Steps to run the project locally:
 ## Team Members role
 Tanushree 
 -UI/UX designer
+
 Tanvi Chillale 
 -Frontend Developer
+
 Sumith Dominic Pereira 
 -Full Stack Developer
+
 Sooraj V R  
 -Backend developer
