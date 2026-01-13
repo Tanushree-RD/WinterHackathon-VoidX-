@@ -9,6 +9,9 @@ Students order and pay from their phones, receive a secure digital token, and di
 The kitchen staff sees paid orders in real time on a dashboard and marks them as served.
 This makes food pickup fast, clean, and organized.
 
+#Demo Video Link:
+https://youtu.be/mTHAdAbR3ik?si=1RRs9i2auR1gPt__
+
 
 ## Features
 Students can view the menu, place an order, and pay remotely from their phone
