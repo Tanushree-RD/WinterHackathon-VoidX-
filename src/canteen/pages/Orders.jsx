@@ -77,7 +77,7 @@ export default function Orders() {
                 <div className="orders-header">
                     <h2>Cash on Counter <span className="count-badge">{cashOrders.length}</span></h2>
                     {/* Dev tool to add orders */}
-                    <button onClick={createTestOrder} className="btn-test-order">+ Test</button>
+
                 </div>
                 <div className="orders-list">
                     {cashOrders.length === 0 && <div className="no-orders">No pending cash orders</div>}
@@ -92,26 +92,38 @@ export default function Orders() {
                                     <button
                                         className="btn-header-action btn-expand"
                                         title="Expand/Collapse Details"
+                                        style={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
                                     >
-                                        <ChevronDown
-                                            size={24}
-                                            strokeWidth={3}
-                                            className="expand-icon"
+                                        <img
+                                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"
+                                            alt="Expand"
                                             style={{
+                                                width: '24px',
+                                                height: '24px',
                                                 transform: expandedOrders[order.id] ? 'rotate(180deg)' : 'rotate(0deg)',
-                                                transition: 'transform 0.3s ease'
+                                                transition: 'transform 0.3s ease',
+                                                display: 'block'
                                             }}
                                         />
                                     </button>
                                     <button
                                         className="btn-header-action btn-paid"
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Don't toggle expansion when marking paid
+                                            e.stopPropagation();
                                             handleMarkPaid(order.id);
                                         }}
                                         title="Mark as Paid"
+                                        style={{ backgroundColor: '#dcfce7' }}
                                     >
-                                        <Check size={24} strokeWidth={3} color="#ffffff" />
+                                        <img
+                                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"
+                                            alt="Mark Paid"
+                                            style={{
+                                                width: '24px',
+                                                height: '24px',
+                                                display: 'block'
+                                            }}
+                                        />
                                     </button>
                                 </div>
                             </div>
