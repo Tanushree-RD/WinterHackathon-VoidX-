@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../../shared/context/AuthContext';
 import { useCart } from '../../shared/context/CartContext';
@@ -7,6 +8,10 @@ export default function UserLayout() {
     const { user, signOut } = useAuth();
     const { getCartItemCount } = useCart();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "User Dashboard";
+    }, []);
 
     const handleLogout = async () => {
         try {

@@ -167,7 +167,7 @@ export default function UserPayment() {
                                     <Banknote size={24} />
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: '700', color: '#f8fafc' }}>Cash on Collection</div>
+                                    <div style={{ fontWeight: '700', color: '#f8fafc' }}>Cash on Counter</div>
                                     <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Pay at the counter when you pick up</div>
                                 </div>
                                 <div style={{

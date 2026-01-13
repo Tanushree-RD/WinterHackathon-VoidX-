@@ -157,10 +157,45 @@ export default function UserOrders() {
                                     ))}
                                 </div>
 
+                                <div style={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                                    borderRadius: '0.75rem',
+                                    padding: '1rem',
+                                    marginBottom: '1rem',
+                                    border: '1px solid rgba(255, 255, 255, 0.05)'
+                                }}>
+                                    {order.items?.map((item, idx) => (
+                                        <div key={idx} style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            marginBottom: idx === order.items.length - 1 ? 0 : '0.5rem',
+                                            paddingBottom: idx === order.items.length - 1 ? 0 : '0.5rem',
+                                            borderBottom: idx === order.items.length - 1 ? 'none' : '1px dashed rgba(255, 255, 255, 0.1)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <div style={{
+                                                    width: '6px', height: '6px', borderRadius: '50%',
+                                                    backgroundColor: '#3b82f6', opacity: 0.5
+                                                }}></div>
+                                                <span style={{ color: '#e2e8f0', fontSize: '0.95rem' }}>{item.name}</span>
+                                                <span style={{
+                                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                                    color: '#94a3b8',
+                                                    fontSize: '0.75rem',
+                                                    padding: '0 6px',
+                                                    borderRadius: '4px'
+                                                }}>x{item.quantity}</span>
+                                            </div>
+                                            <span style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: '500' }}>₹{item.price * item.quantity}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
                                 <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontSize: '0.875rem' }}>
                                         <Banknote size={16} />
-                                        <span>Paid via {order.paymentMode === 'cash' ? 'Cash on Collection' : 'Online'}</span>
+                                        <span>Paid via {order.paymentMode === 'cash' ? 'Cash on Counter' : 'Online'}</span>
                                     </div>
                                     <div style={{ color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: '600', fontSize: '0.875rem' }}>
                                         Order ID: {order.orderNumber}
