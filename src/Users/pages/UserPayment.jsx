@@ -118,15 +118,9 @@ export default function UserPayment() {
                                 <div className="method-icon-wrapper">
                                     <Banknote size={24} />
                                 </div>
-<<<<<<< HEAD
                                 <div className="method-details">
-                                    <div className="method-name">Cash on Collection</div>
+                                    <div className="method-name">Cash on Counter</div>
                                     <div className="method-desc">Pay at the counter when you pick up</div>
-=======
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: '700', color: '#f8fafc' }}>Cash on Counter</div>
-                                    <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Pay at the counter when you pick up</div>
->>>>>>> 9025409c4e58618e4556746cdcd510ccda5ccd42
                                 </div>
                                 <div className="selection-indicator">
                                     {paymentMethod === 'cash' && <div className="selection-dot"></div>}

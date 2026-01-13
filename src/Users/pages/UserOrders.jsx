@@ -132,10 +132,6 @@ export default function UserOrders() {
                                     ))}
                                 </div>
 
-<<<<<<< HEAD
-                                <div className="order-card-footer">
-                                    <div className="payment-mode-info">
-=======
                                 <div style={{
                                     backgroundColor: 'rgba(255, 255, 255, 0.02)',
                                     borderRadius: '0.75rem',
@@ -173,7 +169,6 @@ export default function UserOrders() {
 
                                 <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontSize: '0.875rem' }}>
->>>>>>> 9025409c4e58618e4556746cdcd510ccda5ccd42
                                         <Banknote size={16} />
                                         <span>Paid via {order.paymentMode === 'cash' ? 'Cash on Counter' : 'Online'}</span>
                                     </div>
