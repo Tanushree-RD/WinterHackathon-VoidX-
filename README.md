@@ -9,6 +9,10 @@ Students order and pay from their phones, receive a secure digital token, and di
 The kitchen staff sees paid orders in real time on a dashboard and marks them as served.
 This makes food pickup fast, clean, and organized.
 
+#Demo Video Link:
+https://youtu.be/mTHAdAbR3ik?si=1RRs9i2auR1gPt__
+
+https://youtu.be/NZj2qCCZB4o?si=5xT1HCsQ06FEqa0O
 
 ## Features
 Students can view the menu, place an order, and pay remotely from their phone
@@ -38,11 +42,15 @@ Steps to run the project locally:
 3. Add environment variables (if any)
 4. Run the project
 
-## Team Members
+## Team Members role
 Tanushree 
+-UI/UX designer
 
 Tanvi Chillale 
+-Frontend Developer
 
 Sumith Dominic Pereira 
+-Full Stack Developer
 
 Sooraj V R  
+-Backend developer
