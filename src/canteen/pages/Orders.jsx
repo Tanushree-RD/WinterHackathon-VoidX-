@@ -77,28 +77,26 @@ export default function Orders() {
                 <div className="orders-header">
                     <h2>Cash on Counter <span className="count-badge">{cashOrders.length}</span></h2>
                     {/* Dev tool to add orders */}
-                    <button onClick={createTestOrder} style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', background: '#444' }}>+ Test</button>
+                    <button onClick={createTestOrder} className="btn-test-order">+ Test</button>
                 </div>
                 <div className="orders-list">
                     {cashOrders.length === 0 && <div className="no-orders">No pending cash orders</div>}
                     {cashOrders.map(order => (
-                        <div key={order.id} className="order-card" style={{ cursor: 'default' }}>
+                        <div key={order.id} className="order-card">
                             <div
                                 className="order-card-header"
                                 onClick={() => toggleExpand(order.id)}
-                                style={{ cursor: 'pointer' }}
                             >
                                 <span className="order-token">Token #{order.token || '---'}</span>
                                 <div className="header-actions">
                                     <button
                                         className="btn-header-action btn-expand"
-                                        style={{ pointerEvents: 'none' }} // Header handles the click
                                         title="Expand/Collapse Details"
                                     >
                                         <ChevronDown
                                             size={24}
                                             strokeWidth={3}
-                                            color="#00d4ff"
+                                            className="expand-icon"
                                             style={{
                                                 transform: expandedOrders[order.id] ? 'rotate(180deg)' : 'rotate(0deg)',
                                                 transition: 'transform 0.3s ease'
@@ -126,7 +124,7 @@ export default function Orders() {
                                     </div>
                                     <div className="order-items">
                                         {(!order.items || order.items.length === 0) ? (
-                                            <div style={{ color: '#888', fontStyle: 'italic' }}>No items in order</div>
+                                            <div className="no-items-text">No items in order</div>
                                         ) : (
                                             order.items.map((item, idx) => (
                                                 <div key={idx} className="order-item-row">
@@ -153,35 +151,34 @@ export default function Orders() {
                     <h2>Paid Orders <span className="count-badge">{paidOrders.length}</span></h2>
                 </div>
                 <div className="orders-list">
-                    {paidOrders.length === 0 && <div className="no-orders" style={{ color: '#555' }}>No paid orders yet</div>}
+                    {paidOrders.length === 0 && <div className="no-orders">No paid orders yet</div>}
                     {paidOrders.map(order => (
-                        <div key={order.id} className="order-card" style={{ borderColor: '#2e7d32', display: 'block' }}>
-                            <div className="order-card-header" style={{ marginBottom: '1rem' }}>
+                        <div key={order.id} className="order-card paid-card">
+                            <div className="order-card-header mb-4">
                                 <span className="order-token">Token #{order.token || '---'}</span>
                                 <span className="order-time">{formatTime(order.createdAt)}</span>
                             </div>
 
-                            <div className="order-items" style={{ marginBottom: '1.5rem' }}>
+                            <div className="order-items mb-6">
                                 {order.items?.map((item, idx) => (
-                                    <div key={idx} className="order-item-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <div key={idx} className="order-item-row border-b-light">
                                         <span><span className="item-qty">{item.quantity}x</span> {item.name}</span>
                                     </div>
                                 ))}
                                 {(!order.items || order.items.length === 0) && (
-                                    <div style={{ color: '#888', fontStyle: 'italic' }}>No items in order</div>
+                                    <div className="no-items-text">No items in order</div>
                                 )}
                             </div>
 
-                            <div className="order-total" style={{ borderTop: '1px dashed rgba(16, 185, 129, 0.3)', padding: '1rem 0' }}>
-                                <span className="total-label" style={{ color: '#4caf50' }}>{order.paymentMode?.toUpperCase()} PAID</span>
-                                <span className="total-amount" style={{ fontSize: '1.5rem' }}>₹{order.totalPrice || order.total || 0}</span>
+                            <div className="order-total paid-total">
+                                <span className="total-label-success">{order.paymentMode?.toUpperCase()} PAID</span>
+                                <span className="total-amount-large">₹{order.totalPrice || order.total || 0}</span>
                             </div>
 
-                            <div className="order-actions" style={{ marginTop: '1rem', display: 'flex', width: '100%' }}>
+                            <div className="order-actions">
                                 <button
                                     className="btn-action btn-picked"
                                     onClick={() => handlePicked(order.id)}
-                                    style={{ width: '100%', padding: '1.2rem', zIndex: 10 }}
                                 >
                                     Finish Order
                                 </button>

@@ -1,10 +1,11 @@
 import { useNavigate, Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../../shared/context/AuthContext';
 import { useCart } from '../../shared/context/CartContext';
-import { LogOut, ShoppingCart, User, History, UtensilsCrossed } from 'lucide-react';
+import { LogOut, ShoppingCart, UtensilsCrossed, History } from 'lucide-react';
+import './UserLayout.css';
 
 export default function UserLayout() {
-    const { user, signOut } = useAuth();
+    const { signOut } = useAuth();
     const { getCartItemCount } = useCart();
     const navigate = useNavigate();
 
@@ -18,133 +19,45 @@ export default function UserLayout() {
     };
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#0f172a', display: 'flex', flexDirection: 'column' }}>
+        <div className="user-layout-container">
             {/* Header / Navbar */}
-            <nav style={{
-                padding: '1rem 1.5rem',
-                backgroundColor: 'rgba(15, 23, 42, 0.8)',
-                backdropFilter: 'blur(12px)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                position: 'sticky',
-                top: 0,
-                zIndex: 50
-            }}>
-                <Link to="/users/menu" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{
-                        width: '40px',
-                        height: '40px',
-                        background: 'linear-gradient(135deg, #3b82f6 0%, #a855f7 100%)',
-                        borderRadius: '0.75rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
-                    }}>
+            <nav className="user-navbar">
+                <Link to="/users/menu" className="nav-brand-link">
+                    <div className="brand-icon-wrapper">
                         <UtensilsCrossed size={22} color="white" />
                     </div>
-                    <span style={{
-                        fontSize: '1.25rem',
-                        fontWeight: '800',
-                        color: '#fff',
-                        letterSpacing: '-0.025em'
-                    }}>VoidX <span style={{ color: '#3b82f6' }}>Canteen</span></span>
+                    <span className="brand-text">VoidX <span className="brand-text-highlight">Canteen</span></span>
                 </Link>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                <div className="nav-actions">
                     {/* Cart Tooltip Button */}
                     <button
                         onClick={() => navigate('/users/cart')}
-                        style={{
-                            position: 'relative',
-                            background: 'rgba(59, 130, 246, 0.1)',
-                            border: '1px solid rgba(59, 130, 246, 0.2)',
-                            borderRadius: '0.75rem',
-                            padding: '0.6rem',
-                            color: '#60a5fa',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                        }}
+                        className="icon-btn btn-cart"
                         title="My Cart"
                     >
                         <ShoppingCart size={22} />
                         {getCartItemCount() > 0 && (
-                            <span style={{
-                                position: 'absolute',
-                                top: '-0.4rem',
-                                right: '-0.4rem',
-                                backgroundColor: '#ef4444',
-                                color: 'white',
-                                fontSize: '0.75rem',
-                                fontWeight: 'bold',
-                                borderRadius: '9999px',
-                                minWidth: '1.25rem',
-                                height: '1.25rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '2px solid #0f172a',
-                                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
-                            }}>
+                            <span className="cart-badge">
                                 {getCartItemCount()}
                             </span>
                         )}
                     </button>
 
-                    {/* My Orders Link - Styled as icon button next to cart */}
+                    {/* My Orders Link */}
                     <button
                         onClick={() => navigate('/users/orders')}
-                        style={{
-                            background: 'rgba(168, 85, 247, 0.1)',
-                            border: '1px solid rgba(168, 85, 247, 0.2)',
-                            borderRadius: '0.75rem',
-                            padding: '0.6rem',
-                            color: '#a855f7',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.2)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.1)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                        }}
+                        className="icon-btn btn-orders"
                         title="My Orders"
                     >
                         <History size={22} />
                     </button>
 
                     {/* Profile & Logout */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div className="logout-wrapper">
                         <button
                             onClick={handleLogout}
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#94a3b8',
-                                cursor: 'pointer',
-                                padding: '0.5rem',
-                                borderRadius: '0.5rem',
-                                transition: 'all 0.2s'
-                            }}
+                            className="btn-logout"
                             title="Logout"
                         >
                             <LogOut size={20} />
@@ -154,7 +67,7 @@ export default function UserLayout() {
             </nav>
 
             {/* Main Content Area */}
-            <main style={{ flex: 1, padding: '1.5rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+            <main className="main-content">
                 <Outlet />
             </main>
         </div>

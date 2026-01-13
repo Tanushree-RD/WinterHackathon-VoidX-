@@ -85,7 +85,7 @@ export default function DailyMenu() {
             <div className="daily-header-row">
                 <h2 className="daily-menu-header">Daily Menu</h2>
                 <div className="active-status-badge">
-                    <span className="dot" style={{ width: 8, height: 8, background: '#34d399', borderRadius: '50%' }}></span>
+                    <span className="dot" style={{ width: 8, height: 8, background: '#10b981', borderRadius: '50%' }}></span>
                     Live Now: {deployedMenuDay}
                 </div>
             </div>
@@ -165,43 +165,12 @@ function AddItemsModal({ isOpen, onClose, allItems, initialSelectedIds, initialD
     const [targetDay, setTargetDay] = useState(initialDay);
     const [selectedIds, setSelectedIds] = useState(new Set(initialSelectedIds));
 
-    // If target day changes, we should ideally fetch that day's items to show check state,
-    // BUT the requirement says "Default selected value = currently active chip" and "Previously selected items remain checked" (when reopened).
-    // It implies if I switch dropdown in modal, I should probably load that day's items?
-    // The prompt says: "When reopened: Previously selected items remain checked".
-    // It doesn't explicitly say "When switching dropdown in modal, load that day's items".
-    // But "Menu Selector" is inside the dialog.
-    // If I change the dropdown, logic dictates I should probably edit THAT day's menu.
-    // So I need to fetch the IDs for `targetDay` whenever it changes.
-    // Since I can't easily subscribe inside a sub-component conditionally without complexity, 
-    // I might just accept that for this V1, changing the dropdown might require fetching.
-
-    // However, the simplest interpretation is: 
-    // 1. Open modal for "Monday".
-    // 2. Select items.
-    // 3. Confirm -> Saves to Monday.
-
-    // If user changes dropdown to "Tuesday", it implies they want to save THIS selection to Tuesday? 
-    // Or they want to EDIT Tuesday?
-    // "Fetch all items... Display as vertical list... Checkbox... Previously selected items remain checked".
-    // This usually implies "Edit mode for existing items of that day".
-
-    // So I will make a quick fetch when targetDay changes.
+    // Refetch logic similar to previous implementation
     useEffect(() => {
         let active = true;
-        // We need a one-off fetch here because we are inside a modal and switching days
-        // reusing the subscription logic might be tricky if not lifted up.
-        // I will use a direct subscription for the modal's target day or just a one-off get?
-        // Prompt says "When KEYBOARD... Previously selected items remain checked".
-        // It refers to when the DIALOG is REOPENED.
-
-        // Let's implement: When Target Day changes, we fetch its current items to populate the checkboxes.
-        // We can use the same subscribeToDailyMenu but we need to Unsubscribe old one.
-
         const unsub = subscribeToDailyMenu(targetDay, (ids) => {
             if (active) setSelectedIds(new Set(ids));
         });
-
         return () => { active = false; unsub(); };
     }, [targetDay]);
 
@@ -215,24 +184,17 @@ function AddItemsModal({ isOpen, onClose, allItems, initialSelectedIds, initialD
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="modal-header">
                     <h3 className="modal-title">Select Menu</h3>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}><X /></button>
+                    <button onClick={onClose} className="btn-close-modal"><X size={20} /></button>
                 </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', color: '#aaa' }}>Select Menu Day</label>
+                <div className="modal-select-container">
+                    <label className="modal-label">Select Menu Day</label>
                     <select
                         value={targetDay}
                         onChange={e => setTargetDay(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '0.8rem',
-                            background: '#151520',
-                            color: 'white',
-                            border: '1px solid #444',
-                            borderRadius: '8px'
-                        }}
+                        className="modal-select"
                     >
                         {days.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
@@ -240,18 +202,16 @@ function AddItemsModal({ isOpen, onClose, allItems, initialSelectedIds, initialD
 
                 <div className="modal-list">
                     {allItems.map(item => (
-                        <div key={item.id} className="modal-item-row" onClick={() => toggleItem(item.id)}>
+                        <div
+                            key={item.id}
+                            className={`modal-item-row ${selectedIds.has(item.id) ? 'selected' : ''}`}
+                            onClick={() => toggleItem(item.id)}
+                        >
                             <div>
-                                <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                                <div style={{ fontSize: '0.9rem', color: '#34d399' }}>₹{item.price}</div>
+                                <div className="modal-item-name">{item.name}</div>
+                                <div className="modal-item-price">₹{item.price}</div>
                             </div>
-                            <div style={{
-                                width: 24, height: 24,
-                                borderRadius: 6,
-                                border: '2px solid #555',
-                                background: selectedIds.has(item.id) ? '#00d4ff' : 'transparent',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                            }}>
+                            <div className="checkbox-custom">
                                 {selectedIds.has(item.id) && <Check size={16} color="white" />}
                             </div>
                         </div>
@@ -259,7 +219,7 @@ function AddItemsModal({ isOpen, onClose, allItems, initialSelectedIds, initialD
                 </div>
 
                 <div className="modal-actions">
-                    <button className="action-btn" style={{ background: 'transparent', border: '1px solid #555' }} onClick={onClose}>Cancel</button>
+                    <button className="btn-cancel" onClick={onClose}>Cancel</button>
                     <button className="action-btn btn-add" onClick={() => onSave(targetDay, Array.from(selectedIds))}>Confirm</button>
                 </div>
             </div>

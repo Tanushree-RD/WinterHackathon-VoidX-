@@ -5,9 +5,29 @@
     line-height: 1.5;
     font-weight: 400;
 
-    color-scheme: dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #0f0f0f;
+    /* Bright & Fresh Palette */
+    --bg-primary: #F8F9FA;
+    --bg-secondary: #ffffff;
+    --bg-accent: #FFFBF0;
+    
+    --text-primary: #2D3436;
+    --text-secondary: #636E72;
+    --text-light: #ffffff;
+
+    --accent-coral: #FF6B6B;
+    --accent-mango: #FFA500;
+    --accent-mint: #4ECDC4;
+    --accent-sky: #45B7D1;
+    --accent-purple: #a855f7;
+    --accent-blue: #3b82f6;
+
+    --status-preparing: #FFD93D;
+    --status-ready: #6BCB77;
+    --status-delayed: #FF6B6B;
+
+    color-scheme: light;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -23,7 +43,8 @@ body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     overflow-x: hidden;
 }
 
