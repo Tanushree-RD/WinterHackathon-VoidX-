@@ -174,7 +174,7 @@ export default function Login() {
                                     id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="your.email@sjec.ac.in"
+                                    placeholder="your.email@example.com"
                                     className="form-input"
                                     disabled={loading}
                                     autoComplete="email"
@@ -274,7 +274,7 @@ export default function Login() {
                     <div className="login-info">
                         <div className="info-item">
                             <span className="info-icon">👨‍🎓</span>
-                            <span>Students: Use @sjec.ac.in email</span>
+                            <span>Students: Use your email</span>
                         </div>
                         <div className="info-item">
                             <span className="info-icon">👨‍💼</span>
