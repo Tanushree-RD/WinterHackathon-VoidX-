@@ -22,13 +22,8 @@ export const getUserRole = (email) => {
         return 'admin';
     }
 
-    // Check if email ends with college domain
-    if (email.toLowerCase().endsWith(COLLEGE_DOMAIN)) {
-        return 'user';
-    }
-
-    // Unauthorized email
-    return null;
+    // Allow any other email as a regular user
+    return 'user';
 };
 
 /**
