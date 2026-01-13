@@ -41,11 +41,12 @@ Steps to run the project locally:
 3. Add environment variables (if any)
 4. Run the project
 
-## Team Members
+## Team Members role
 Tanushree 
-
+-UI/UX designer
 Tanvi Chillale 
-
+-Frontend Developer
 Sumith Dominic Pereira 
-
+-Full Stack Developer
 Sooraj V R  
+-Backend developer
