@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Image as ImageIcon, Plus, Check } from 'lucide-react';
+import { X, Image as ImageIcon, Plus, Check, Link } from 'lucide-react';
 import { addItem, updateItem } from '../../shared/services/menuService';
 import './AddItemModal.css';
 
@@ -11,6 +11,8 @@ export default function AddItemModal({ onClose, itemToEdit }) {
     const [price, setPrice] = useState(itemToEdit ? itemToEdit.price : '');
     const [tags, setTags] = useState(itemToEdit ? itemToEdit.tags : []);
     const [imageFile, setImageFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState(itemToEdit ? itemToEdit.imageUrl : '');
+    const [inputType, setInputType] = useState('url'); // 'file' or 'url' - default to url as requested
     const [imagePreview, setImagePreview] = useState(itemToEdit ? itemToEdit.imageUrl : null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -35,6 +37,13 @@ export default function AddItemModal({ onClose, itemToEdit }) {
             reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleUrlChange = (e) => {
+        const url = e.target.value;
+        setImageUrl(url);
+        setImagePreview(url);
+        setImageFile(null); // Clear file if URL is used
     };
 
     const handleAddTagStart = () => {
@@ -66,10 +75,10 @@ export default function AddItemModal({ onClose, itemToEdit }) {
         setIsLoading(true);
         try {
             if (itemToEdit) {
-                await updateItem(itemToEdit.id, itemToEdit, { name, price: Number(price), tags }, imageFile);
+                await updateItem(itemToEdit.id, itemToEdit, { name, price: Number(price), tags }, inputType === 'file' ? imageFile : null, inputType === 'url' ? imageUrl : undefined);
                 success("Item updated successfully!");
             } else {
-                await addItem(name, price, tags, imageFile);
+                await addItem(name, price, tags, inputType === 'file' ? imageFile : null, inputType === 'url' ? imageUrl : null);
                 success("New item added successfully!");
             }
             onClose();
@@ -91,29 +100,67 @@ export default function AddItemModal({ onClose, itemToEdit }) {
                     <div className="form-column">
                         <div className="field-group">
                             <label>Item Image (Optional)</label>
-                            <div
-                                className="image-upload-area"
-                                onClick={() => fileInputRef.current.click()}
-                                style={{
-                                    backgroundImage: imagePreview ? `url(${imagePreview})` : 'none',
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center'
-                                }}
-                            >
-                                {!imagePreview && (
-                                    <>
-                                        <ImageIcon size={32} />
-                                        <span style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Click to upload image</span>
-                                    </>
-                                )}
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    hidden
-                                    accept="image/*"
-                                    onChange={handleImageSelect}
-                                />
+
+                            <div className="image-input-tabs">
+                                <button
+                                    className={`tab-btn ${inputType === 'url' ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setInputType('url');
+                                        setImagePreview(imageUrl);
+                                        setImageFile(null);
+                                    }}
+                                >
+                                    <Link size={14} /> URL
+                                </button>
+                                <button
+                                    className={`tab-btn ${inputType === 'file' ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setInputType('file');
+                                        if (!imageFile) setImagePreview(null);
+                                    }}
+                                >
+                                    <ImageIcon size={14} /> Upload
+                                </button>
                             </div>
+
+                            {inputType === 'file' ? (
+                                <div
+                                    className="image-upload-area"
+                                    onClick={() => fileInputRef.current.click()}
+                                    style={{
+                                        backgroundImage: imagePreview ? `url(${imagePreview})` : 'none',
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
+                                    }}
+                                >
+                                    {!imagePreview && (
+                                        <>
+                                            <ImageIcon size={32} />
+                                            <span style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Click to upload image</span>
+                                        </>
+                                    )}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        hidden
+                                        accept="image/*"
+                                        onChange={handleImageSelect}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="url-input-container">
+                                    <input
+                                        type="text"
+                                        placeholder="Paste image URL here..."
+                                        value={imageUrl}
+                                        onChange={handleUrlChange}
+                                        className="image-url-input"
+                                    />
+                                    {imagePreview && (
+                                        <div className="url-preview" style={{ backgroundImage: `url(${imagePreview})` }} />
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 

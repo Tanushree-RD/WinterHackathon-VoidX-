@@ -15,10 +15,10 @@ export function subscribeToItems(callback) {
     });
 }
 
-export async function addItem(name, price, tags, imageFile) {
+export async function addItem(name, price, tags, imageFile, manualImageUrl) {
     try {
         const itemId = doc(collection(db, ITEMS_COLL)).id;
-        let imageUrl = '';
+        let imageUrl = manualImageUrl || '';
         if (imageFile) {
             const storageRef = ref(storage, `menu-items/${itemId}`);
             await uploadBytes(storageRef, imageFile);
@@ -37,12 +37,18 @@ export async function addItem(name, price, tags, imageFile) {
     } catch (error) { console.error(error); throw error; }
 }
 
-export async function updateItem(itemId, oldData, newData, imageFile) {
+export async function updateItem(itemId, oldData, newData, imageFile, manualImageUrl) {
     let imageUrl = oldData.imageUrl;
+
     if (imageFile) {
         const storageRef = ref(storage, `menu-items/${itemId}`);
         await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(storageRef);
+    } else if (manualImageUrl !== undefined) {
+        // Only update if explicitly provided (even if empty string to clear)
+        // If manualImageUrl is passed as null/undefined, we keep oldData.imageUrl
+        // In this implementation, we assume if the user switched to URL mode, they want that URL or empty.
+        imageUrl = manualImageUrl;
     }
 
     const price = Number(newData.price);
