@@ -110,12 +110,86 @@ export default function UserMenu() {
             setSearchResults(data);
         } catch (error) {
             console.error("Smart search failed, falling back to local filter:", error);
-            // Fallback: Simple local filter
-            const lowerQuery = searchText.toLowerCase();
-            const fallbackResults = todayItems.filter(item =>
-                item.name.toLowerCase().includes(lowerQuery) ||
-                (item.tags && item.tags.some(tag => tag.toLowerCase().includes(lowerQuery)))
-            );
+
+            let query = searchText.toLowerCase().trim();
+            // Step 1: Normalize common phrases
+            query = query.replace(/\bnon\s+veg\b/g, 'non-veg');
+            query = query.replace(/\bnon\s+vegetarian\b/g, 'non-veg');
+
+            const words = query.split(/\s+/).filter(w => w.length > 0);
+
+            if (words.length === 0) {
+                setSearchResults([]);
+                return;
+            }
+
+            // Intent detectors
+            const isNonVeg = words.some(w => ['non-veg', 'nonveg', 'nv', 'meat', 'chicken', 'egg', 'fish', 'mutton'].includes(w));
+            // Only flag as Veg if Non-Veg wasn't detected (to handle "non veg" properly)
+            const isVeg = !isNonVeg && words.some(w => ['veg', 'vegetarian', 'v'].includes(w));
+            const isCheap = words.some(w => ['cheap', 'budget', 'under', 'affordable', 'low', 'price', 'below', 'less'].includes(w));
+
+            // Price threshold
+            let priceLimit = Infinity;
+            const priceMatch = query.match(/(?:under|below|rs\.?|₹|max|less\s+than)\s*(\d+)/i);
+            if (priceMatch) {
+                priceLimit = parseInt(priceMatch[1]);
+            } else if (isCheap) {
+                const prices = todayItems.map(i => i.price).sort((a, b) => a - b);
+                priceLimit = prices[Math.floor(prices.length * 0.45)] || 100;
+            }
+
+            const intentWords = ['cheap', 'veg', 'non-veg', 'nonveg', 'under', 'budget', 'items', 'food', 'vegetarian', 'affordable', 'low', 'price', 'rs', 'below', 'max', 'v', 'nv', 'non', 'less', 'than'];
+            const searchKeywords = words.filter(w => !intentWords.includes(w));
+
+            const scoredResults = todayItems.map(item => {
+                const itemName = item.name.toLowerCase();
+                const itemTags = (item.tags || []).map(t => t.toLowerCase());
+                let score = 0;
+
+                // 1. Dietary logic
+                const itemIsVeg = itemTags.includes('veg');
+                const itemIsNonVeg = itemTags.includes('non-veg') || itemTags.includes('chicken') || itemName.includes('chicken') || itemTags.includes('meat');
+
+                // Filter logic
+                if (isVeg && !itemIsVeg) return null;
+                if (isNonVeg && !itemIsNonVeg) return null;
+
+                // 2. Price filter
+                if (item.price > priceLimit) return null;
+
+                // 3. Keyword Scoring (Check both separate words and the full phrase)
+                if (searchKeywords.length > 0) {
+                    searchKeywords.forEach(kw => {
+                        if (itemName.includes(kw)) {
+                            score += 10;
+                            if (itemName.startsWith(kw)) score += 5;
+                        }
+                        if (itemTags.some(t => t.includes(kw))) score += 5;
+                    });
+
+                    // If user searched for a specific name but it doesn't match, drop it
+                    if (score === 0) return null;
+                } else if (isVeg || isNonVeg || isCheap) {
+                    // If no specific keyword, base score for matching category
+                    score = 1;
+                } else {
+                    // No keywords and no intent found (shouldn't happen with filtered logic)
+                    return null;
+                }
+
+                // 4. Price scoring (Tie-breaker for "cheap")
+                if (isCheap) {
+                    // Lower price gives higher score boost
+                    score += (1000 / (item.price || 1));
+                }
+
+                return { ...item, _score: score };
+            }).filter(Boolean);
+
+            // Sort by score (descending)
+            const fallbackResults = scoredResults.sort((a, b) => b._score - a._score);
+
             setSearchResults(fallbackResults);
         } finally {
             setIsSearching(false);

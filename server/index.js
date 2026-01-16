@@ -39,33 +39,27 @@ app.post('/smart-search', async (req, res) => {
             tags: item.tags || []
         })));
 
-        const prompt = `You are a smart food menu search engine.
+        const prompt = `You are an expert AI food recommender for a canteen.
+Your task is to analyze the user's query and the provided menu to suggest the best matching items.
 
-User query: ${query}
+User query: "${query}"
 
-Menu items are provided as JSON.
-Each item has:
-- id
-- name
-- price
-- tags (array of strings)
-
-Tags can include:
-- veg, non-veg
-- snacks, meal
-- chicken, paneer
-- spicy, sweet, filling
+Menu Data (JSON):
+${menuJson}
 
 Rules:
-- Recommend a maximum of 5 items
-- Prefer lower price items if query mentions cheap or under a price
-- Match veg / non-veg using tags
-- Match snacks or meals using tags
-- Sort items by best match first
-- Return ONLY a JSON array of item ids
-- Do NOT add explanations or extra text
-
-${menuJson}`;
+1. DIETARY MATCHING: 
+   - If user asks for "veg", ONLY return items that have the "veg" tag.
+   - If user asks for "non-veg" or specific meats like "chicken", prioritize items with "non-veg", "chicken", etc.
+2. PRICE SENSITIVITY:
+   - If "cheap", "budget", or "under X" is mentioned, prioritize lower-priced items that fit the requirement.
+3. SEMANTIC MATCHING:
+   - Match descriptive words like "spicy", "sweet", "filling", "snack", "meal" against item names and tags.
+4. RESPONSE FORMAT:
+   - Return ONLY a valid JSON array of item IDs (e.g., ["id1", "id2"]).
+   - Return a maximum of 5 most relevant items.
+   - Rank them by relevance (best match first).
+   - DO NOT include any markdown formatting, explanations, or extra text.`;
 
         // 4. Call Gemini
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
