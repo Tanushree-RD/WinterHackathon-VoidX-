@@ -20,11 +20,13 @@ export default function UserMenu() {
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
 
-    // Group items by their first tag
+    // Group items by tags - an item can appear in multiple tag sections
     const groupedItems = todayItems.reduce((acc, item) => {
-        const tag = (item.tags && item.tags.length > 0) ? item.tags[0] : 'Other';
-        if (!acc[tag]) acc[tag] = [];
-        acc[tag].push(item);
+        const itemTags = (item.tags && item.tags.length > 0) ? item.tags : ['Other'];
+        itemTags.forEach(tag => {
+            if (!acc[tag]) acc[tag] = [];
+            acc[tag].push(item);
+        });
         return acc;
     }, {});
 
@@ -262,114 +264,116 @@ export default function UserMenu() {
                     <p>The canteen kitchen is preparing the menu. Check back in a moment!</p>
                 </div>
             ) : (
-                Object.entries(groupedItems).map(([tag, items]) => (
-                    <div key={tag} className="tag-section">
-                        {/* Tag Header */}
-                        <div className="tag-header">
-                            <div className="tag-title-wrapper">
-                                <div className="tag-accent-bar"></div>
-                                <h2 className="tag-title">{tag}</h2>
+                Object.entries(groupedItems)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([tag, items]) => (
+                        <div key={tag} className="tag-section">
+                            {/* Tag Header */}
+                            <div className="tag-header">
+                                <div className="tag-title-wrapper">
+                                    <div className="tag-accent-bar"></div>
+                                    <h2 className="tag-title">{tag}</h2>
+                                </div>
+                                <div className="tag-divider"></div>
                             </div>
-                            <div className="tag-divider"></div>
-                        </div>
 
-                        <div className="menu-grid">
-                            {items.map((item) => {
-                                const isInCart = cart[item.id];
-                                const isSelecting = selectingItemId === item.id;
+                            <div className="menu-grid">
+                                {items.map((item) => {
+                                    const isInCart = cart[item.id];
+                                    const isSelecting = selectingItemId === item.id;
 
-                                return (
-                                    <div key={item.id} className="menu-item-card">
-                                        {/* Image */}
-                                        <div className="item-image-container">
-                                            {item.image || item.imageUrl ? (
-                                                <img
-                                                    src={item.image || item.imageUrl}
-                                                    alt={item.name}
-                                                    className="item-image"
-                                                />
-                                            ) : (
-                                                <div className="image-placeholder">
-                                                    <ShoppingBag size={48} />
-                                                </div>
-                                            )}
-                                            <div className="image-overlay"></div>
-                                        </div>
-
-                                        <div className="card-content">
-                                            <h3 className="item-name">{item.name}</h3>
-
-                                            <div className="item-footer">
-                                                <div className="item-price">
-                                                    ₹{item.price}
-                                                </div>
-
-                                                {/* STATE A: Default - Add Button */}
-                                                {!isInCart && !isSelecting && (
-                                                    <button
-                                                        onClick={() => handleAddClick(item.id)}
-                                                        className="btn-add"
-                                                    >
-                                                        Add
-                                                    </button>
-                                                )}
-
-                                                {/* STATE B: Selecting - Quantity Picker */}
-                                                {isSelecting && (
-                                                    <div className="qty-selector">
-                                                        <button
-                                                            onClick={decrementQuantity}
-                                                            className="btn-qty minus"
-                                                        >
-                                                            <Minus size={16} strokeWidth={2.5} />
-                                                        </button>
-                                                        <span className="qty-display">
-                                                            {tempQuantity}
-                                                        </span>
-                                                        <button
-                                                            onClick={incrementQuantity}
-                                                            className="btn-qty plus"
-                                                        >
-                                                            <Plus size={16} strokeWidth={2.5} />
-                                                        </button>
+                                    return (
+                                        <div key={`${tag}-${item.id}`} className="menu-item-card">
+                                            {/* Image */}
+                                            <div className="item-image-container">
+                                                {item.image || item.imageUrl ? (
+                                                    <img
+                                                        src={item.image || item.imageUrl}
+                                                        alt={item.name}
+                                                        className="item-image"
+                                                    />
+                                                ) : (
+                                                    <div className="image-placeholder">
+                                                        <ShoppingBag size={48} />
                                                     </div>
                                                 )}
+                                                <div className="image-overlay"></div>
+                                            </div>
 
-                                                {/* STATE C: Added - Delete Icon */}
-                                                {isInCart && !isSelecting && (
-                                                    <div className="added-status">
-                                                        <div className="status-badge">
-                                                            <Check size={16} strokeWidth={2.5} />
-                                                            Added
-                                                        </div>
+                                            <div className="card-content">
+                                                <h3 className="item-name">{item.name}</h3>
+
+                                                <div className="item-footer">
+                                                    <div className="item-price">
+                                                        ₹{item.price}
+                                                    </div>
+
+                                                    {/* STATE A: Default - Add Button */}
+                                                    {!isInCart && !isSelecting && (
                                                         <button
-                                                            onClick={() => handleDelete(item.id)}
-                                                            className="btn-delete"
+                                                            onClick={() => handleAddClick(item.id)}
+                                                            className="btn-add"
                                                         >
-                                                            <Trash2 size={18} strokeWidth={2.5} />
+                                                            Add
+                                                        </button>
+                                                    )}
+
+                                                    {/* STATE B: Selecting - Quantity Picker */}
+                                                    {isSelecting && (
+                                                        <div className="qty-selector">
+                                                            <button
+                                                                onClick={decrementQuantity}
+                                                                className="btn-qty minus"
+                                                            >
+                                                                <Minus size={16} strokeWidth={2.5} />
+                                                            </button>
+                                                            <span className="qty-display">
+                                                                {tempQuantity}
+                                                            </span>
+                                                            <button
+                                                                onClick={incrementQuantity}
+                                                                className="btn-qty plus"
+                                                            >
+                                                                <Plus size={16} strokeWidth={2.5} />
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    {/* STATE C: Added - Delete Icon */}
+                                                    {isInCart && !isSelecting && (
+                                                        <div className="added-status">
+                                                            <div className="status-badge">
+                                                                <Check size={16} strokeWidth={2.5} />
+                                                                Added
+                                                            </div>
+                                                            <button
+                                                                onClick={() => handleDelete(item.id)}
+                                                                className="btn-delete"
+                                                            >
+                                                                <Trash2 size={18} strokeWidth={2.5} />
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Selecting State Actions */}
+                                                {isSelecting && (
+                                                    <div className="selection-actions">
+                                                        <button onClick={handleCancel} className="btn-cancel">
+                                                            Cancel
+                                                        </button>
+                                                        <button onClick={() => handleConfirm(item)} className="btn-confirm">
+                                                            Confirm
                                                         </button>
                                                     </div>
                                                 )}
                                             </div>
-
-                                            {/* Selecting State Actions */}
-                                            {isSelecting && (
-                                                <div className="selection-actions">
-                                                    <button onClick={handleCancel} className="btn-cancel">
-                                                        Cancel
-                                                    </button>
-                                                    <button onClick={() => handleConfirm(item)} className="btn-confirm">
-                                                        Confirm
-                                                    </button>
-                                                </div>
-                                            )}
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                ))
+                    ))
             )}
 
             {/* Step Status */}
